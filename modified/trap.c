@@ -48,15 +48,18 @@ trap(struct trapframe *tf)
 
   switch(tf->trapno){
   case T_IRQ0 + IRQ_TIMER:
+    
+    //assgn_5
+    if(myproc()) 
+    {
+      myproc()->rtime++;
+      //ifdef mlfq
+      myproc()->ticks[myproc()->current_queue]++;
+    }
+
     if(cpuid() == 0){
       acquire(&tickslock);
       ticks++;
-      
-      //assgn_5
-      struct proc *p = myproc();
-      if(p) 
-        p->rtime++;
-
       wakeup(&ticks);
       release(&tickslock);
     }

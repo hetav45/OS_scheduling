@@ -46,3 +46,65 @@ will need to install a cross-compiler gcc suite capable of producing
 x86 ELF binaries (see https://pdos.csail.mit.edu/6.828/).
 Then run "make TOOLPREFIX=i386-jos-elf-". Now install the QEMU PC
 simulator and run "make qemu".
+
+--------------------------------------------------------------------------
+MODIFICATIONS
+
+(NOTE - all modifications are leaded by "//assgn_5" comment
+        use : grep -s "//assgn_5" * .* -H -n)
+
+NEW SYSTEM CALLS :
+
+1. int waitx(int *wtime, int *rtime);
+-> description : an extension of the existing wait system call, providing 
+                 the wait_time and the run_time of the child_process.
+                 NOTE - wtime and rtime are measured in 'ticks' unit
+-> implementation : rtime of a process is increased with every ticks it 
+                    receives form the CPU by modifying the 'trap' 
+                    function in trap.c.
+                    wtime is measured as etime(end_time) - ctime(creation
+                    _time) - rtime(run_time). 
+
+2. int setpr(int new_pr);
+-> description : sets the priority of the calling process to new_pr.
+                 return value - old priority of the calling process.
+-> implementation : updated the priority field value in the 
+                    'struct proc' of the calling process.
+
+3. int pinfo(struct proc_stat *p);
+-> description : provides the process info regarding execution using MLFQ
+                 scheduling policy 'p'.
+                 return value - 0 for success, 1 otherwise.
+-> implementation : obtained the required info from 'struct proc' of the 
+                    calling process.
+
+
+NEW SCHEDULING POLICIES :
+
+(NOTE : to use a pirticular policy, run:
+        1.make clean 
+        2.make qemu SCHEDULER={policy_code})
+
+1. FCFS (first come first serve)
+-> policy_code : FCFS
+-> implementation : searched for the process with the lowest 'ctime' value
+
+2. PBS (priority based scheduling)
+-> policy_code : PBS
+-> implementation : searched for the process with lowest priority value     
+                    (meaning highest priority); in case of two processes
+                    with same priority value, the process with lower letime
+                    (last_execution_time) is favoured(to implemente round 
+                    robin )
+
+3. MLFQ (multilevel feedback queue)
+-> policy_code : MLFQ
+-> implementation : started searching for the process to run from the lowest 
+                    level queue to the highest level queue.
+                    other details of implementation are followed as required 
+                    in the assignment.
+                    NOTE - ageing_check is performed after every STARV=1000
+                    ticks, thus priority of any waiting process will be 
+                    increased if 'wtime' > STARV=1000 ticks. (technically,
+                    the priority increasing can take at most 2*STARV-1 ticks
+                    of time).

@@ -29,3 +29,8 @@ SYSCALL(getpid)
 SYSCALL(sbrk)
 SYSCALL(sleep)
 SYSCALL(uptime)
+
+// assgn 5
+SYSCALL(waitx)
+SYSCALL(setpr)
+SYSCALL(pinfo)

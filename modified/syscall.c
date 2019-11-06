@@ -107,6 +107,7 @@ extern int sys_uptime(void);
 //assgn_5
 extern int sys_waitx(void);
 extern int sys_setpr(void);
+extern int sys_pinfo(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -134,6 +135,7 @@ static int (*syscalls[])(void) = {
 //assgn_5
 [SYS_waitx]   sys_waitx,
 [SYS_setpr]   sys_setpr, 
+[SYS_pinfo]   sys_pinfo,
 };
 
 void

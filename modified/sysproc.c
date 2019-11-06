@@ -6,6 +6,7 @@
 #include "memlayout.h"
 #include "mmu.h"
 #include "proc.h"
+#include "pinfo.h"
 
 int
 sys_fork(void)
@@ -47,7 +48,21 @@ sys_setpr(void)
   if(argint(0, &new_pr) < 0)
     return -1;
 
-  return set_priority(new_pr);
+  return setpr(new_pr);
+}
+
+//assgn_5
+int 
+sys_pinfo(void)
+{
+  struct proc_stat *x;
+
+  if(argptr(0, (void *)&x, sizeof(*x)) < 0)
+  {
+    return -1;
+  }
+
+  return pinfo(x);
 }
 
 int
